@@ -5,15 +5,20 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 cd "$ROOT"
 
-if [[ ! -d .venv ]]; then
-  python3 -m venv .venv
+VENV="$ROOT/.venv"
+PYTHON="$VENV/bin/python"
+
+if [[ ! -x "$PYTHON" ]]; then
+  echo "Creating Python virtual environment..."
+  rm -rf "$VENV"
+  python3 -m venv "$VENV"
 fi
 
-# shellcheck disable=SC1091
-source .venv/bin/activate
+echo "Using Python:"
+"$PYTHON" -c 'import sys; print(sys.executable)'
 
-python -m pip install --upgrade pip
-python -m pip install -e .
+"$PYTHON" -m pip install --upgrade pip
+"$PYTHON" -m pip install -e .
 
 mkdir -p results
 touch results/.gitkeep
