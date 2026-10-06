@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vla-bench"
+version = "0.1.0"
+description = "Pluggable benchmark platform for VLA/VLM robotics evaluation"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+  "pyyaml>=6.0",
+  "pydantic>=2.0",
+  "typer>=0.12",
+  "rich>=13.0",
+]
+
+[project.scripts]
+vla-bench = "vla_bench.cli.main:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]

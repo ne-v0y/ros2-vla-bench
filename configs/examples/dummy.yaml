@@ -1,0 +1,15 @@
+experiment:
+  name: smoke-test
+  seed: 42
+
+model:
+  name: example_model
+  config: {}
+
+benchmark:
+  name: example_benchmark
+  episodes: 10
+  config: {}
+
+output:
+  directory: results/smoke-test
