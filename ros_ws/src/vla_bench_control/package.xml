@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>vla_bench_control</name>
+  <version>0.1.0</version>
+  <description>Minimal ROS 2 velocity control utilities for ros2-vla-bench.</description>
+
+  <maintainer email="noreply@example.com">ros2-vla-bench maintainers</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
