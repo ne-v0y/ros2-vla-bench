@@ -59,6 +59,7 @@ Usage:
   scripts/ros.sh sim [--robot R] [--world W] [--model M] [--headless]
                      [--x X] [--y Y] [--yaw YAW] [key:=value...]
   scripts/ros.sh sim --list
+  scripts/ros.sh control <forward|backward|left|right|stop> [options]
   scripts/ros.sh shell
   scripts/ros.sh run <package> <executable> [args...]
   scripts/ros.sh launch <package> <launch_file> [args...]
@@ -97,6 +98,13 @@ Commands:
       --yaw       spawn heading (turtlebot4 only)
       --list      show all robots and worlds
       key:=value  extra launch arguments, e.g. nav2:=true for turtlebot4
+
+  control
+      Send a short geometry_msgs/Twist command to /cmd_vel using the
+      vla_bench_control package. Examples:
+        scripts/ros.sh control forward
+        scripts/ros.sh control left --duration 0.5
+        scripts/ros.sh control forward --linear 0.1 --topic /cmd_vel
 
   shell
       Open an interactive shell with ROS + this workspace sourced.
@@ -479,6 +487,18 @@ smoke() {
   sim --robot none --world empty "$@"
 }
 
+control() {
+  [[ $# -ge 1 ]] || die "Usage: scripts/ros.sh control <forward|backward|left|right|stop> [options]"
+
+  source_ros
+
+  if ! has_pkg vla_bench_control; then
+    die "vla_bench_control is not built. Run: scripts/ros.sh build --packages-select vla_bench_control"
+  fi
+
+  exec ros2 run vla_bench_control drive "$@"
+}
+
 command="${1:-}"
 [[ $# -gt 0 ]] && shift
 
@@ -505,6 +525,10 @@ case "$command" in
 
   sim)
     sim "$@"
+    ;;
+
+  control)
+    control "$@"
     ;;
 
   shell)
