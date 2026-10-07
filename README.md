@@ -75,6 +75,45 @@ Open a sourced ROS shell:
 ./scripts/ros.sh shell
 ```
 
+### Robot control
+
+The workspace includes a small `vla_bench_control` ROS 2 package that publishes
+`geometry_msgs/Twist` commands. Build it once:
+
+```bash
+./scripts/ros.sh build --packages-select vla_bench_control
+```
+
+With a simulated robot running, send discrete motion commands:
+
+```bash
+./scripts/ros.sh control forward
+./scripts/ros.sh control backward --duration 0.5
+./scripts/ros.sh control left --duration 0.5
+./scripts/ros.sh control right --duration 0.5
+./scripts/ros.sh control stop
+```
+
+Defaults are 0.20 m/s linear speed, 0.60 rad/s angular speed, a 1 second duration,
+and the `/cmd_vel` topic. Override them with `--linear`, `--angular`,
+`--duration`, `--rate`, and `--topic`.
+
+This intentionally exposes a tiny action vocabulary that can later sit behind a
+VLM/VLA policy:
+
+```text
+model output -> forward | backward | left | right | stop
+                         |
+                         v
+                    geometry_msgs/Twist
+                         |
+                         v
+                      /cmd_vel
+```
+
+The control utility always publishes a zero-velocity command at the end of each
+motion command so the robot does not keep moving after the command finishes.
+
 ### Simulation: robots and worlds
 
 Launch a Gazebo world with a robot:
