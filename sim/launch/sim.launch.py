@@ -37,6 +37,11 @@ WORLDS = {
     'maze': ('turtlebot4_gz_bringup', 'worlds/maze.sdf', 0.0, 0.0),
 }
 
+# Default (x, y) spawn for worlds in sim/worlds/ whose origin is not a free spot on the floor.
+CUSTOM_WORLD_SPAWNS = {
+    'apartment_layout': (4.3, 7.0),  # living room
+}
+
 ROBOT_MODELS = {
     'none': [''],
     'turtlebot3': ['waffle', 'waffle_pi', 'burger'],
@@ -67,12 +72,12 @@ def resolve_world(world):
     """Return (gz world argument, world name inside the SDF, default x, default y)."""
     path = Path(os.path.expanduser(world))
     if path.suffix in ('.sdf', '.world') and path.is_file():
-        return str(path.resolve()), sdf_world_name(path), 0.0, 0.0
+        return str(path.resolve()), sdf_world_name(path), *CUSTOM_WORLD_SPAWNS.get(path.stem, (0.0, 0.0))
 
     for suffix in ('.sdf', '.world'):
         custom = CUSTOM_WORLDS / f'{world}{suffix}'
         if custom.is_file():
-            return str(custom), sdf_world_name(custom), 0.0, 0.0
+            return str(custom), sdf_world_name(custom), *CUSTOM_WORLD_SPAWNS.get(world, (0.0, 0.0))
 
     if world not in WORLDS:
         raise RuntimeError(

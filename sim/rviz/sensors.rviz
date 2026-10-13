@@ -1,0 +1,135 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+      Splitter Ratio: 0.5
+  - Class: rviz_common/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Value: true
+      Reference Frame: <Fixed Frame>
+      Plane: XY
+      Plane Cell Count: 20
+      Cell Size: 1
+      Line Style:
+        Line Width: 0.03
+        Value: Lines
+      Color: 160; 160; 164
+      Alpha: 0.5
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      Value: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Durability Policy: Transient Local
+      Visual Enabled: true
+      Collision Enabled: false
+      Alpha: 1
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Value: true
+      Show Arrows: false
+      Show Axes: true
+      Show Names: false
+      Marker Scale: 0.5
+    - Class: rviz_default_plugins/LaserScan
+      Name: LaserScan
+      Enabled: true
+      Value: true
+      Topic:
+        Value: /scan
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+      Style: Flat Squares
+      Size (m): 0.04
+      Color Transformer: FlatColor
+      Color: 255; 64; 64
+      Alpha: 1
+      Decay Time: 0
+      Queue Size: 10
+    - Class: rviz_default_plugins/Odometry
+      Name: Odometry
+      Enabled: false
+      Value: false
+      Topic:
+        Value: /odom
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+      Keep: 100
+    - Class: rviz_default_plugins/Image
+      Name: Camera
+      Enabled: true
+      Value: true
+      Topic:
+        Value: /camera/image_raw
+        Depth: 5
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+      Normalize Range: true
+      Median window: 5
+      Min Value: 0
+      Max Value: 1
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: odom
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+      Line color: 128; 128; 0
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Current View
+      Target Frame: base_footprint
+      Distance: 5
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05
+      Near Clip Distance: 0.01
+      Pitch: 0.9
+      Yaw: 3.14
+      Value: Orbit (rviz)
+    Saved: ~
+Window Geometry:
+  Camera:
+    collapsed: false
+  Displays:
+    collapsed: false
+  Views:
+    collapsed: true
+  Height: 900
+  Width: 1400
+  Hide Left Dock: false
+  Hide Right Dock: false

@@ -146,6 +146,45 @@ Launch a Gazebo world with a robot:
 The launch file is [`sim/launch/sim.launch.py`](sim/launch/sim.launch.py); it can also be run directly
 with `ros2 launch sim/launch/sim.launch.py robot:=turtlebot3 world:=house`.
 
+### Apartment demo
+
+[`sim/worlds/apartment_layout.world`](sim/worlds/apartment_layout.world) is a furnished apartment
+(living room, bedrooms, bathroom, entry, storage and balcony). Open the whole scenario in one
+Terminator window with six titled panes:
+
+```bash
+./scripts/apartment.sh        # open the window
+./scripts/apartment.sh stop   # stop the sim, close the window, kill leftover Gazebo
+```
+
+| Pane | Runs |
+| --- | --- |
+| `sim` | `./scripts/ros.sh sim --robot turtlebot3 --world apartment_layout --x 4.3 --y 7.0` |
+| `teleop` | `TURTLEBOT3_MODEL=waffle_pi ros2 run turtlebot3_teleop teleop_keyboard` (focused on start) |
+| `rviz` | `ros2 run rviz2 rviz2` with [`sim/rviz/sensors.rviz`](sim/rviz/sensors.rviz): camera image, laser scan, robot model, TF |
+| `docker` | the `vla-bench-ros` container command, typed but not run; press Enter to start it |
+| `shell1`, `shell2` | spare shells |
+
+ROS and the workspace are sourced in every pane. Ctrl-C stops a pane's command and leaves a shell
+in that pane. The window uses your `~/.config/terminator/config` profiles and keybindings plus a
+generated `apartment` layout; your config file is not modified. Use `stop` rather than closing the
+window: closing it can leave Gazebo running, and the script refuses to start while Gazebo is
+already running.
+
+The container command (needs the `vla-bench-ros` image built from `Dockerfile.ros`):
+
+```bash
+docker run --rm -it \
+  --network host \
+  -e ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}" \
+  -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4 \
+  -v "$PWD:/workspace" \
+  vla-bench-ros \
+  bash
+```
+
+Without the script, `./scripts/ros.sh sim --world apartment_layout` spawns the robot at the same spot.
+
 ## Architecture
 
 ```text

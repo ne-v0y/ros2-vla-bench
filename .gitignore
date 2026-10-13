@@ -25,9 +25,10 @@ build/
 # ROS / colcon
 # --------------------------------------------------
 
-ros_ws/build/
-ros_ws/install/
-ros_ws/log/
+# colcon output wherever it was run (ros_ws/, repo root, experiments/, ...);
+# build/ is matched by the Python section above.
+install/
+log/
 
 
 # --------------------------------------------------
@@ -37,6 +38,9 @@ ros_ws/log/
 models/
 checkpoints/
 weights/
+
+# Source package that shares the name.
+!src/vla_bench/adapters/models/
 
 *.ckpt
 *.pth
