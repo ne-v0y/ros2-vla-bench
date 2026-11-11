@@ -63,6 +63,7 @@ Usage:
   scripts/ros.sh sim --list
   scripts/ros.sh control <forward|backward|left|right|stop> [options]
   scripts/ros.sh fusion
+  scripts/ros.sh vla
   scripts/ros.sh shell
   scripts/ros.sh run <package> <executable> [args...]
   scripts/ros.sh launch <package> <launch_file> [args...]
@@ -114,6 +115,10 @@ Commands:
   fusion
       Fuse wheel odometry and IMU with robot_localization and publish
       /vla_bench/fused/odom.
+
+  vla
+      Start the model-agnostic VLA observation/action bridge. It publishes
+      /vla_bench/vla/observation and consumes /vla_bench/vla/action.
 
   shell
       Open an interactive shell with ROS + this workspace sourced.
@@ -521,6 +526,16 @@ fusion() {
   exec ros2 launch vla_bench_perception sensor_fusion.launch.py
 }
 
+vla() {
+  source_ros
+
+  if ! has_pkg vla_bench_vla; then
+    die "vla_bench_vla is not built. Run: scripts/ros.sh build --packages-select vla_bench_vla"
+  fi
+
+  exec ros2 launch vla_bench_vla vla_bridge.launch.py "$@"
+}
+
 command="${1:-}"
 [[ $# -gt 0 ]] && shift
 
@@ -555,6 +570,10 @@ case "$command" in
 
   fusion)
     fusion "$@"
+    ;;
+
+  vla)
+    vla "$@"
     ;;
 
   shell)

@@ -129,6 +129,47 @@ in a second shell:
 velocity with IMU yaw/yaw-rate and publishes `/vla_bench/fused/odom`. This keeps
 the benchmark interface independent from Gazebo's ground-truth `/odom`.
 
+### VLA integration
+
+The `vla_bench_vla` package defines a small ROS contract between the simulator
+and any model adapter. Start it after simulation and fusion:
+
+```bash
+./scripts/ros.sh build --packages-select vla_bench_vla
+./scripts/ros.sh vla
+```
+
+The bridge publishes `/vla_bench/vla/observation` as compact JSON containing
+the current instruction, fused pose/twist, lidar sector minima, and metadata for
+the latest RGB frame. The RGB pixels stay on `/camera/image_raw`, so a model
+runner can consume the native image without base64 duplication.
+
+The model publishes exactly one of `FORWARD`, `BACKWARD`, `LEFT`, `RIGHT`,
+or `STOP` to `/vla_bench/vla/action`. For example:
+
+```bash
+ros2 topic pub --once /vla_bench/vla/instruction std_msgs/msg/String "{data: 'Walk toward the sofa'}"
+ros2 topic echo /vla_bench/vla/observation
+ros2 topic pub --once /vla_bench/vla/action std_msgs/msg/String "{data: 'FORWARD'}"
+```
+
+Actions automatically time out to STOP. The bridge also rejects FORWARD when
+the front lidar sector is closer than 0.45 m (or scan data is missing), providing
+a minimal safety layer around model output.
+
+```text
+RGB image ---------------------------> model adapter
+                                         |
+fused odom + lidar + instruction --------+--> VLA/VLM
+                                         |
+                                         v
+                               FORWARD|BACKWARD|LEFT|RIGHT|STOP
+                                         |
+                                         v
+                                  VLA ROS bridge
+                                   /cmd_vel
+```
+
 ### Simulation: robots and worlds
 
 Launch a Gazebo world with a robot. The default is the benchmark-owned
