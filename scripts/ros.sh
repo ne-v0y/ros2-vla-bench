@@ -22,6 +22,7 @@ ROS_PACKAGES=(
   "ros-${ROS_DISTRO_EXPECTED}-cv-bridge"
   "ros-${ROS_DISTRO_EXPECTED}-image-transport"
   "ros-${ROS_DISTRO_EXPECTED}-teleop-twist-keyboard"
+  "ros-${ROS_DISTRO_EXPECTED}-robot-localization"
   python3-colcon-common-extensions
   python3-rosdep
   python3-vcstool
@@ -61,6 +62,7 @@ Usage:
                      [--x X] [--y Y] [--yaw YAW] [key:=value...]
   scripts/ros.sh sim --list
   scripts/ros.sh control <forward|backward|left|right|stop> [options]
+  scripts/ros.sh fusion
   scripts/ros.sh shell
   scripts/ros.sh run <package> <executable> [args...]
   scripts/ros.sh launch <package> <launch_file> [args...]
@@ -108,6 +110,10 @@ Commands:
         scripts/ros.sh control forward
         scripts/ros.sh control left --duration 0.5
         scripts/ros.sh control forward --linear 0.1 --topic /cmd_vel
+
+  fusion
+      Fuse wheel odometry and IMU with robot_localization and publish
+      /vla_bench/fused/odom.
 
   shell
       Open an interactive shell with ROS + this workspace sourced.
@@ -504,6 +510,17 @@ control() {
   exec ros2 run vla_bench_control drive "$@"
 }
 
+fusion() {
+  source_ros
+
+  if ! has_pkg vla_bench_perception; then
+    die "vla_bench_perception is not built. Run: scripts/ros.sh build --packages-select vla_bench_perception"
+  fi
+
+  has_pkg robot_localization || die "robot_localization is unavailable. Run: scripts/ros.sh setup"
+  exec ros2 launch vla_bench_perception sensor_fusion.launch.py
+}
+
 command="${1:-}"
 [[ $# -gt 0 ]] && shift
 
@@ -534,6 +551,10 @@ case "$command" in
 
   control)
     control "$@"
+    ;;
+
+  fusion)
+    fusion "$@"
     ;;
 
   shell)

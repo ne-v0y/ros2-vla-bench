@@ -114,6 +114,21 @@ model output -> forward | backward | left | right | stop
 The control utility always publishes a zero-velocity command at the end of each
 motion command so the robot does not keep moving after the command finishes.
 
+### Sensor fusion
+
+The human-view robot exposes wheel joint states and an IMU. Run the fusion stack
+in a second shell:
+
+```bash
+./scripts/ros.sh build --packages-select vla_bench_perception
+./scripts/ros.sh fusion
+```
+
+`wheel_odometry_node` is parameterized for wheel radius/separation and publishes
+`/vla_bench/wheel/odom_estimated`. A `robot_localization` EKF combines wheel
+velocity with IMU yaw/yaw-rate and publishes `/vla_bench/fused/odom`. This keeps
+the benchmark interface independent from Gazebo's ground-truth `/odom`.
+
 ### Simulation: robots and worlds
 
 Launch a Gazebo world with a robot. The default is the benchmark-owned
