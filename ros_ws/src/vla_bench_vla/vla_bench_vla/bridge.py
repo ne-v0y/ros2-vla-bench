@@ -6,6 +6,7 @@ import rclpy
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image, LaserScan
 from std_msgs.msg import String
 
@@ -62,13 +63,13 @@ class VLABridge(Node):
         self.action_deadline_ns = 0
 
         self.create_subscription(
-            Image, self.image_topic, self._on_image, rclpy.qos.qos_profile_sensor_data
+            Image, self.image_topic, self._on_image, qos_profile_sensor_data
         )
         self.create_subscription(
-            LaserScan, self.scan_topic, self._on_scan, rclpy.qos.qos_profile_sensor_data
+            LaserScan, self.scan_topic, self._on_scan, qos_profile_sensor_data
         )
         self.create_subscription(
-            Odometry, self.odom_topic, self._on_odom, rclpy.qos.qos_profile_sensor_data
+            Odometry, self.odom_topic, self._on_odom, qos_profile_sensor_data
         )
         self.create_subscription(String, self.instruction_topic, self._on_instruction, 10)
         self.create_subscription(String, self.action_topic, self._on_action, 10)

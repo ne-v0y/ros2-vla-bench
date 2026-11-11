@@ -298,7 +298,7 @@ def generate_launch_description():
             'headless', default_value='false', description='Run without the Gazebo GUI'),
         DeclareLaunchArgument('x', default_value='', description='Spawn x (empty = world default)'),
         DeclareLaunchArgument('y', default_value='', description='Spawn y (empty = world default)'),
-        DeclareLaunchArgument('yaw', default_value='0.0', description='Spawn yaw (turtlebot4 only)'),
+        DeclareLaunchArgument('yaw', default_value='0.0', description='Spawn yaw (human_view and turtlebot4)'),
         DeclareLaunchArgument('verbosity', default_value='2', description='Gazebo log verbosity 0-4'),
         OpaqueFunction(function=launch_setup),
     ])

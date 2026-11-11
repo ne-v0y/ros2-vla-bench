@@ -101,7 +101,7 @@ Commands:
                   turtlebot3: waffle | waffle_pi | burger
                   turtlebot4: standard | lite
       --x/--y     spawn position (defaults depend on the world)
-      --yaw       spawn heading (turtlebot4 only)
+      --yaw       spawn heading (human_view and turtlebot4)
       --list      show all robots and worlds
       key:=value  extra launch arguments, e.g. nav2:=true for turtlebot4
 
