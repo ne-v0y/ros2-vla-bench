@@ -1,6 +1,7 @@
 """Compose a Gazebo world with an optional robot.
 
 Usage (normally via scripts/ros.sh sim):
+  ros2 launch sim/launch/sim.launch.py robot:=human_view world:=empty
   ros2 launch sim/launch/sim.launch.py robot:=turtlebot3 world:=house
   ros2 launch sim/launch/sim.launch.py robot:=turtlebot4 world:=warehouse headless:=true
 
@@ -43,6 +44,7 @@ CUSTOM_WORLD_SPAWNS = {
 }
 
 ROBOT_MODELS = {
+    'human_view': ['standard'],
     'none': [''],
     'turtlebot3': ['waffle', 'waffle_pi', 'burger'],
     'turtlebot4': ['standard', 'lite'],
@@ -142,6 +144,69 @@ def turtlebot4_actions(model, world_name, x, y, yaw):
     ]
 
 
+def human_view_actions(world_name, x, y, yaw):
+    model_file = SIM_DIR / 'models' / 'human_view' / 'model.sdf'
+    if not model_file.is_file():
+        raise RuntimeError(f'Human-view robot model is missing: {model_file}')
+
+    bridge_topics = [
+        '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+        '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
+        '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+        '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+        '/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model',
+        '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+        '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
+        '/camera/image_raw@sensor_msgs/msg/Image[gz.msgs.Image',
+    ]
+
+    static_frames = [
+        ('camera_link', 0.11, 0.0, 1.62),
+        ('laser_link', 0.10, 0.0, 0.95),
+        ('imu_link', 0.0, 0.0, 0.25),
+    ]
+
+    actions = [
+        Node(
+            package='ros_gz_sim',
+            executable='create',
+            name='spawn_human_view',
+            output='screen',
+            arguments=[
+                '-world', world_name,
+                '-file', str(model_file),
+                '-name', 'vla_human_view',
+                '-x', str(x),
+                '-y', str(y),
+                '-z', '0.0',
+                '-Y', str(yaw),
+            ],
+        ),
+        Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            name='human_view_bridge',
+            output='screen',
+            arguments=bridge_topics,
+        ),
+    ]
+
+    for child, tx, ty, tz in static_frames:
+        actions.append(Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name=f'{child}_static_tf',
+            output='screen',
+            arguments=[
+                '--x', str(tx), '--y', str(ty), '--z', str(tz),
+                '--roll', '0', '--pitch', '0', '--yaw', '0',
+                '--frame-id', 'base_link', '--child-frame-id', child,
+            ],
+        ))
+
+    return actions
+
+
 def setup_resource_paths():
     tb3 = share('turtlebot3_gazebo')
     if tb3:
@@ -199,7 +264,9 @@ def launch_setup(context):
                 gui_args += f' --gui-config {gui_config}'
         actions.append(gz_sim(gui_args))
 
-    if robot == 'turtlebot3':
+    if robot == 'human_view':
+        actions += human_view_actions(world_name, x, y, cfg['yaw'])
+    elif robot == 'turtlebot3':
         actions += turtlebot3_actions(model, x, y)
     elif robot == 'turtlebot4':
         actions += turtlebot4_actions(model, world_name, x, y, cfg['yaw'])
@@ -217,11 +284,12 @@ def launch_setup(context):
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
-            'robot', default_value='turtlebot3', choices=list(ROBOT_MODELS),
+            'robot', default_value='human_view', choices=list(ROBOT_MODELS),
             description='Robot to spawn'),
         DeclareLaunchArgument(
             'model', default_value='',
-            description='Robot variant (turtlebot3: waffle|waffle_pi|burger, '
+            description='Robot variant (human_view: standard; '
+                        'turtlebot3: waffle|waffle_pi|burger; '
                         'turtlebot4: standard|lite); empty = robot default'),
         DeclareLaunchArgument(
             'world', default_value='empty',

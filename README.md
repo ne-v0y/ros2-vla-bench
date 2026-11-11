@@ -116,9 +116,12 @@ motion command so the robot does not keep moving after the command finishes.
 
 ### Simulation: robots and worlds
 
-Launch a Gazebo world with a robot:
+Launch a Gazebo world with a robot. The default is the benchmark-owned
+`human_view` mobile base: its camera is mounted at 1.62 m so recorded video
+has an adult eye-level viewpoint rather than a tabletop robot viewpoint.
 
 ```bash
+./scripts/ros.sh sim --world apartment_layout
 ./scripts/ros.sh sim --robot turtlebot3 --world house
 ./scripts/ros.sh sim --robot turtlebot4 --world warehouse --model lite --headless
 ./scripts/ros.sh sim --robot none --world ./my_world.sdf
@@ -127,7 +130,8 @@ Launch a Gazebo world with a robot:
 
 | Robot (`--robot`) | Models (`--model`) | Native worlds (`--world`) |
 | --- | --- | --- |
-| `turtlebot3` (default) | `waffle` (default), `waffle_pi`, `burger` (no camera) | `house`, `turtlebot3_world`, `tb3_empty`, `dqn_stage1`..`dqn_stage4` |
+| `human_view` (default) | `standard` | any Gazebo world; camera 1.62 m, lidar 0.95 m, IMU + wheel odom |
+| `turtlebot3` | `waffle` (default), `waffle_pi`, `burger` (no camera) | `house`, `turtlebot3_world`, `tb3_empty`, `dqn_stage1`..`dqn_stage4` |
 | `turtlebot4` | `standard` (default), `lite` | `warehouse`, `depot`, `maze` |
 | `none` | | any |
 
@@ -159,8 +163,8 @@ Terminator window with six titled panes:
 
 | Pane | Runs |
 | --- | --- |
-| `sim` | `./scripts/ros.sh sim --robot turtlebot3 --world apartment_layout --x 4.3 --y 7.0` |
-| `teleop` | `TURTLEBOT3_MODEL=waffle_pi ros2 run turtlebot3_teleop teleop_keyboard` (focused on start) |
+| `sim` | `./scripts/ros.sh sim --robot human_view --world apartment_layout --x 4.3 --y 7.0` |
+| `teleop` | `ros2 run teleop_twist_keyboard teleop_twist_keyboard` (focused on start) |
 | `rviz` | `ros2 run rviz2 rviz2` with [`sim/rviz/sensors.rviz`](sim/rviz/sensors.rviz): camera image, laser scan, robot model, TF |
 | `docker` | the `vla-bench-ros` container command, typed but not run; press Enter to start it |
 | `shell1`, `shell2` | spare shells |
@@ -183,7 +187,7 @@ docker run --rm -it \
   bash
 ```
 
-Without the script, `./scripts/ros.sh sim --world apartment_layout` spawns the robot at the same spot.
+Without the script, `./scripts/ros.sh sim --world apartment_layout` spawns the human-view robot at the same spot.
 
 ## Architecture
 

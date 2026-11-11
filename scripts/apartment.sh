@@ -24,8 +24,8 @@ die() {
 # Command each pane runs; the docker pane only gets it typed in.
 pane_command() {
   case "$1" in
-    sim) echo "./scripts/ros.sh sim --robot turtlebot3 --world apartment_layout --x 4.3 --y 7.0" ;;
-    teleop) echo "export TURTLEBOT3_MODEL=waffle_pi && ros2 run turtlebot3_teleop teleop_keyboard" ;;
+    sim) echo "./scripts/ros.sh sim --robot human_view --world apartment_layout --x 4.3 --y 7.0" ;;
+    teleop) echo "ros2 run teleop_twist_keyboard teleop_twist_keyboard" ;;
     rviz) echo "ros2 run rviz2 rviz2 -d sim/rviz/sensors.rviz --ros-args -p use_sim_time:=true" ;;
     docker) echo "$DOCKER_CMD" ;;
   esac

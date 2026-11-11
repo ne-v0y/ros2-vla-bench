@@ -21,6 +21,7 @@ ROS_PACKAGES=(
   "ros-${ROS_DISTRO_EXPECTED}-robot-state-publisher"
   "ros-${ROS_DISTRO_EXPECTED}-cv-bridge"
   "ros-${ROS_DISTRO_EXPECTED}-image-transport"
+  "ros-${ROS_DISTRO_EXPECTED}-teleop-twist-keyboard"
   python3-colcon-common-extensions
   python3-rosdep
   python3-vcstool
@@ -87,12 +88,14 @@ Commands:
   sim
       Launch a Gazebo world with a robot (sim/launch/sim.launch.py).
       Missing robot / world packages are installed via apt on first use.
+        scripts/ros.sh sim --world apartment_layout
         scripts/ros.sh sim --robot turtlebot3 --world house
         scripts/ros.sh sim --robot turtlebot4 --world warehouse --headless
         scripts/ros.sh sim --robot none --world ./my_world.sdf
-      --robot     turtlebot3 (default) | turtlebot4 | none
+      --robot     human_view (default) | turtlebot3 | turtlebot4 | none
       --world     empty (default) | house | warehouse | ... | <path.sdf>
-      --model     turtlebot3: waffle | waffle_pi | burger
+      --model     human_view: standard
+                  turtlebot3: waffle | waffle_pi | burger
                   turtlebot4: standard | lite
       --x/--y     spawn position (defaults depend on the world)
       --yaw       spawn heading (turtlebot4 only)
@@ -356,6 +359,7 @@ setup() {
 # ROS package that provides each robot, and the apt package that installs it.
 robot_ros_pkg() {
   case "$1" in
+    human_view) echo "" ;;
     turtlebot3) echo turtlebot3_gazebo ;;
     turtlebot4) echo turtlebot4_gz_bringup ;;
     none) echo "" ;;
@@ -400,6 +404,7 @@ ensure_ros_pkg() {
 sim_list() {
   cat <<LIST
 Robots (--robot):
+  human_view   model: standard (default; 1.62 m camera height)
   turtlebot3   models: waffle (default, camera), waffle_pi, burger (no camera)
   turtlebot4   models: standard (default), lite
   none         world only
@@ -429,7 +434,7 @@ LIST
 }
 
 sim() {
-  local robot="${SIM_ROBOT:-turtlebot3}"
+  local robot="${SIM_ROBOT:-human_view}"
   local world="${SIM_WORLD:-empty}"
   local model="" headless=false x="" y="" yaw=""
   local extra=()
@@ -451,7 +456,7 @@ sim() {
   done
 
   case "$robot" in
-    turtlebot3 | turtlebot4 | none) ;;
+    human_view | turtlebot3 | turtlebot4 | none) ;;
     *) die "Unknown robot: $robot (see: scripts/ros.sh sim --list)" ;;
   esac
 
